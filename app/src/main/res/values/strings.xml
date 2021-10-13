@@ -1,3 +1,11 @@
 <resources>
-    <string name="app_name">AndroidCorse</string>
+    <string name="app_name">AndroidCourse</string>
+    <string name="name">Имя</string>
+    <string name="phone">Телефон</string>
+    <string name="phone_2">Телефон 2</string>
+    <string name="email">e-mail</string>
+    <string name="email_2">e-mail 2</string>
+    <string name="description">description</string>
+    <string name="contact_list_bar">Список контактов</string>
+    <string name="contact_details_bar">Детали контакта</string>
 </resources>

@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/linearLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:id="@+id/contactImage"
+            android:layout_width="@dimen/contactImgWidth"
+            android:layout_height="@dimen/contactImgHeight"
+            android:layout_marginStart="@dimen/lowMargin"
+            android:layout_marginTop="@dimen/lowMargin"
+            android:background="@drawable/view_background"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/outline_contact_page_24"
+            tools:ignore="ContentDescription" />
+
+        <TextView
+            android:id="@+id/contactName"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/contactImgHeight"
+            android:layout_marginHorizontal="@dimen/lowMargin"
+            android:layout_marginVertical="@dimen/lowMargin"
+            android:background="@drawable/view_background"
+            android:gravity="center"
+            android:text="@string/name"
+            app:layout_constraintBottom_toBottomOf="@+id/contactImage"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/contactImage"
+            app:layout_constraintTop_toTopOf="@+id/contactImage" />
+
+        <TextView
+            android:id="@+id/contactNumber1"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/lowMargin"
+            android:layout_marginTop="@dimen/lowMargin"
+            android:background="@drawable/view_background"
+            android:gravity="center"
+            android:padding="@dimen/textPadding"
+            android:text="@string/phone"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/contactName" />
+
+        <TextView
+            android:id="@+id/contactNumber2"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/lowMargin"
+            android:layout_marginTop="@dimen/lowMargin"
+            android:background="@drawable/view_background"
+            android:gravity="center"
+            android:padding="@dimen/textPadding"
+            android:text="@string/phone_2"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/contactNumber1" />
+
+        <TextView
+            android:id="@+id/contactMail1"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/lowMargin"
+            android:layout_marginTop="@dimen/lowMargin"
+            android:background="@drawable/view_background"
+            android:gravity="center"
+            android:padding="@dimen/textPadding"
+            android:text="@string/email"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/contactNumber2" />
+
+        <TextView
+            android:id="@+id/contactMail2"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/lowMargin"
+            android:layout_marginTop="@dimen/lowMargin"
+            android:background="@drawable/view_background"
+            android:gravity="center"
+            android:padding="@dimen/textPadding"
+            android:text="@string/email_2"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/contactMail1" />
+
+        <TextView
+            android:id="@+id/contactDescription"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/lowMargin"
+            android:background="@drawable/view_background"
+            android:gravity="center"
+            android:padding="@dimen/textPadding"
+            android:text="@string/description"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/contactMail2" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</ScrollView>
