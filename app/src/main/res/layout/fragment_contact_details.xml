@@ -15,6 +15,7 @@
             android:id="@+id/contactImage"
             android:layout_width="@dimen/contactImgWidth"
             android:layout_height="@dimen/contactImgHeight"
+            android:padding="@dimen/imgPadding"
             android:layout_marginStart="@dimen/lowMargin"
             android:layout_marginTop="@dimen/lowMargin"
             android:background="@drawable/view_background"

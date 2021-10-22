@@ -8,17 +8,25 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import com.classic001.androidcorse.R
+import com.classic001.androidcorse.data.Contact
 import com.classic001.androidcorse.databinding.FragmentContactListBinding
 import com.classic001.androidcorse.interfaces.ContactCardClickListener
+import com.classic001.androidcorse.interfaces.ContactListResultListener
+import com.classic001.androidcorse.interfaces.ContactServiceSubscriber
+import com.classic001.androidcorse.interfaces.ServiceInterface
 
-class ContactListFragment : Fragment() {
+class ContactListFragment : Fragment(), ContactServiceSubscriber {
     private var listener: ContactCardClickListener? = null
     private var binding: FragmentContactListBinding? = null
+    private var serviceInterface: ServiceInterface? = null
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
         if (context is ContactCardClickListener) {
             listener = context
+        }
+        if (context is ServiceInterface) {
+            serviceInterface = context
         }
     }
 
@@ -37,6 +45,7 @@ class ContactListFragment : Fragment() {
             (activity as AppCompatActivity?)?.supportActionBar?.apply {
                 setTitle(R.string.contact_list_bar)
             }
+            loadContactList()
         }
     }
 
@@ -50,7 +59,32 @@ class ContactListFragment : Fragment() {
         super.onDetach()
     }
 
+    private fun loadContactList() = serviceInterface?.getService()?.getContacts(callback)
+
+
+    private val callback = object : ContactListResultListener {
+        override fun onComplete(result: List<Contact>) {
+            try {
+                requireActivity().runOnUiThread {
+                    binding?.contactCard?.apply {
+                        contactName.text = result[0].name
+                        contactNum.text = result[0].phone1
+                        contactImage.setImageResource(result[0].photo)
+                    }
+                }
+            } catch (e: IllegalStateException) {
+                e.printStackTrace()
+            }
+        }
+    }
+
+    override fun onServiceBoundListener() {
+        loadContactList()
+    }
+
     companion object {
         fun newInstance() = ContactListFragment()
     }
+
+
 }
