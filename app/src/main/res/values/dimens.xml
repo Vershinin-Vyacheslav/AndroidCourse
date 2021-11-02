@@ -7,4 +7,5 @@
     <dimen name="bigText">24sp</dimen>
     <dimen name="smallText">18sp</dimen>
     <dimen name="textPadding">4dp</dimen>
+    <dimen name="imgPadding">2dp</dimen>
 </resources>

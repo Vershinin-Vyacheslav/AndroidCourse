@@ -10,6 +10,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.AndroidCourse"
         android:fullBackupContent="true">
+        <service android:name=".services.ContactService"/>
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
