@@ -11,6 +11,7 @@
         android:theme="@style/Theme.AndroidCourse"
         android:fullBackupContent="true">
         <service android:name=".services.ContactService"/>
+        <receiver android:name=".BirthdayReceiver"/>
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
