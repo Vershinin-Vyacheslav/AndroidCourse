@@ -12,10 +12,10 @@ import com.classic001.androidcorse.data.Contact
 import com.classic001.androidcorse.databinding.FragmentContactListBinding
 import com.classic001.androidcorse.interfaces.ContactCardClickListener
 import com.classic001.androidcorse.interfaces.ContactListResultListener
-import com.classic001.androidcorse.interfaces.ContactServiceSubscriber
+import com.classic001.androidcorse.interfaces.ContactServiceBoundListener
 import com.classic001.androidcorse.interfaces.ServiceInterface
 
-class ContactListFragment : Fragment(), ContactServiceSubscriber {
+class ContactListFragment : Fragment(), ContactServiceBoundListener {
     private var listener: ContactCardClickListener? = null
     private var binding: FragmentContactListBinding? = null
     private var serviceInterface: ServiceInterface? = null
@@ -64,21 +64,17 @@ class ContactListFragment : Fragment(), ContactServiceSubscriber {
 
     private val callback = object : ContactListResultListener {
         override fun onComplete(result: List<Contact>) {
-            try {
-                requireActivity().runOnUiThread {
-                    binding?.contactCard?.apply {
-                        contactName.text = result[0].name
-                        contactNum.text = result[0].phone1
-                        contactImage.setImageResource(result[0].photo)
-                    }
+            requireActivity().runOnUiThread {
+                binding?.contactCard?.apply {
+                    contactName.text = result[0].name
+                    contactNum.text = result[0].phone1
+                    contactImage.setImageResource(result[0].photo)
                 }
-            } catch (e: IllegalStateException) {
-                e.printStackTrace()
             }
         }
     }
 
-    override fun onServiceBoundListener() {
+    override fun onServiceBound() {
         loadContactList()
     }
 

@@ -9,8 +9,9 @@ import android.os.Bundle
 import android.os.IBinder
 import com.classic001.androidcorse.fragments.ContactDetailsFragment
 import com.classic001.androidcorse.fragments.ContactListFragment
+import com.classic001.androidcorse.fragments.EXTRA_CONTACT_ID
 import com.classic001.androidcorse.interfaces.ContactCardClickListener
-import com.classic001.androidcorse.interfaces.ContactServiceSubscriber
+import com.classic001.androidcorse.interfaces.ContactServiceBoundListener
 import com.classic001.androidcorse.interfaces.ServiceInterface
 import com.classic001.androidcorse.services.ContactService
 import java.lang.ref.WeakReference
@@ -31,7 +32,7 @@ class MainActivity : AppCompatActivity(), ContactCardClickListener, ServiceInter
                 )
             )
             when (val fragment = weakReferenceFragment.get()) {
-                is ContactServiceSubscriber -> fragment.onServiceBoundListener()
+                is ContactServiceBoundListener -> fragment.onServiceBound()
             }
         }
 
@@ -40,10 +41,10 @@ class MainActivity : AppCompatActivity(), ContactCardClickListener, ServiceInter
         }
     }
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        checkExtrasAndStart(savedInstanceState)
         bindService(
             Intent(this, ContactService::class.java),
             connection,
@@ -74,6 +75,24 @@ class MainActivity : AppCompatActivity(), ContactCardClickListener, ServiceInter
             .replace(R.id.fragment_container, ContactDetailsFragment.newInstance(id))
             .addToBackStack(null)
             .commit()
+    }
+
+    private fun startFromNotification(intent: Intent?) {
+        val fragmentManager = supportFragmentManager
+        if (fragmentManager.backStackEntryCount == 1) {
+            fragmentManager.popBackStack()
+        }
+        val id: String = requireNotNull(intent?.extras?.getString(EXTRA_CONTACT_ID))
+        openContactDetailsFragment(id)
+    }
+
+    private fun checkExtrasAndStart(savedInstanceState: Bundle?) {
+        if (intent.extras?.containsKey(EXTRA_CONTACT_ID) == true && savedInstanceState == null) {
+            openContactList()
+            startFromNotification(intent)
+        } else if (savedInstanceState == null) {
+            openContactList()
+        }
     }
 
     override fun onClick() {
