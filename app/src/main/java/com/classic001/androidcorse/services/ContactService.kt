@@ -4,7 +4,7 @@ import android.app.Service
 import android.content.Intent
 import android.os.Binder
 import android.os.IBinder
-import com.classic001.androidcorse.data.Contacts.contacts
+import com.classic001.androidcorse.data.Contacts
 import com.classic001.androidcorse.interfaces.ContactListResultListener
 import com.classic001.androidcorse.interfaces.ContactResultListener
 import java.lang.ref.WeakReference
@@ -17,14 +17,14 @@ class ContactService : Service() {
     fun getContacts(callback: ContactListResultListener) {
         val weakReference = WeakReference(callback)
         Thread {
-            weakReference.get()?.onComplete(contacts)
+            weakReference.get()?.onComplete(Contacts.getContactList(this))
         }.start()
     }
 
     fun getContactById(contactId: String, callback: ContactResultListener) {
         val weakReference = WeakReference(callback)
         Thread {
-            weakReference.get()?.onComplete(contacts.firstOrNull { it.id == contactId })
+            weakReference.get()?.onComplete(Contacts.getContactById(this, contactId))
         }.start()
     }
 

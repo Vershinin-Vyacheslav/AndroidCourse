@@ -1,5 +1,5 @@
 package com.classic001.androidcorse.interfaces
 
 interface ContactCardClickListener {
-    fun onClick()
+    fun onClick(id: String)
 }

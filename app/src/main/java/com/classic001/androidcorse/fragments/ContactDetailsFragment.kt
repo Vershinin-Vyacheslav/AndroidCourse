@@ -8,7 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContextCompat
+import androidx.core.net.toUri
 import androidx.core.os.bundleOf
 import com.classic001.androidcorse.R
 import com.classic001.androidcorse.data.*
@@ -81,12 +81,7 @@ class ContactDetailsFragment : Fragment(), ContactServiceBoundListener {
                     contactMail1.text = result.email1
                     contactMail2.text = result.email2
                     contactDescription.text = result.description
-                    contactImage.setImageDrawable(activity?.let {
-                        ContextCompat.getDrawable(
-                            it.applicationContext,
-                            result.photo
-                        )
-                    })
+                    contactImage.setImageURI(result.photo?.toUri())
                     if (result.birthday != null) {
                         birthday.text = birthdayString
                         setButtonState(birthdayButton)

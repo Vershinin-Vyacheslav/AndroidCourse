@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.net.toUri
 import com.classic001.androidcorse.R
 import com.classic001.androidcorse.data.Contact
 import com.classic001.androidcorse.databinding.FragmentContactListBinding
@@ -19,6 +20,7 @@ class ContactListFragment : Fragment(), ContactServiceBoundListener {
     private var listener: ContactCardClickListener? = null
     private var binding: FragmentContactListBinding? = null
     private var serviceInterface: ServiceInterface? = null
+    private var contactID = ""
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -40,7 +42,7 @@ class ContactListFragment : Fragment(), ContactServiceBoundListener {
         super.onViewCreated(view, savedInstanceState)
         binding = FragmentContactListBinding.bind(view).apply {
             contactCard.root.setOnClickListener {
-                listener?.onClick()
+                listener?.onClick(contactID)
             }
             (activity as AppCompatActivity?)?.supportActionBar?.apply {
                 setTitle(R.string.contact_list_bar)
@@ -59,16 +61,18 @@ class ContactListFragment : Fragment(), ContactServiceBoundListener {
         super.onDetach()
     }
 
-    private fun loadContactList() = serviceInterface?.getService()?.getContacts(callback)
+    private fun loadContactList() =
+        serviceInterface?.getService()?.getContacts(callback)
 
 
     private val callback = object : ContactListResultListener {
         override fun onComplete(result: List<Contact>) {
+            contactID = result[0].id
             requireActivity().runOnUiThread {
                 binding?.contactCard?.apply {
                     contactName.text = result[0].name
                     contactNum.text = result[0].phone1
-                    contactImage.setImageResource(result[0].photo)
+                    contactImage.setImageURI(result[0].photo?.toUri())
                 }
             }
         }
@@ -81,6 +85,4 @@ class ContactListFragment : Fragment(), ContactServiceBoundListener {
     companion object {
         fun newInstance() = ContactListFragment()
     }
-
-
 }

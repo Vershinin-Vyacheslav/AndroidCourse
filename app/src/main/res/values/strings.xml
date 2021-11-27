@@ -16,4 +16,12 @@
     <string name="notification_text">Сегодня день рождения %1$s</string>
     <string name="next_alarm">Напоминание сработает %1$s</string>
     <string name="date_mask">%1$d %2$s %3$d</string>
+    <string name="intro_dialog_title">Внимание!</string>
+    <string name="intro_dialog_text_message">
+        Для корректной работы приложения требуется разрешение доступа к контактам вашего устройства</string>
+    <string name="intro_dialog_positive_button">Продолжить</string>
+    <string name="permission_choice_dialog_title">Доступ к контактам</string>
+    <string name="permission_choice_dialog_text_message">Работа приложения невозможна без получения доступа к контактам </string>
+    <string name="permission_choice_dialog_positive_button">Разрешить</string>
+    <string name="permission_choice_dialog_negative_button">Выход!</string>
 </resources>
