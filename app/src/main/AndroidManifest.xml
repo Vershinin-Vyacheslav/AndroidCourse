@@ -12,7 +12,6 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.AndroidCourse">
-        <service android:name=".services.ContactService" />
         <receiver android:name=".BirthdayReceiver" />
         <activity android:name=".MainActivity">
             <intent-filter>

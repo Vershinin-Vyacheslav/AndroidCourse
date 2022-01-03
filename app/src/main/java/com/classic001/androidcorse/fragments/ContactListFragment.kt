@@ -8,27 +8,24 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.net.toUri
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import com.classic001.androidcorse.R
-import com.classic001.androidcorse.data.Contact
 import com.classic001.androidcorse.databinding.FragmentContactListBinding
 import com.classic001.androidcorse.interfaces.ContactCardClickListener
-import com.classic001.androidcorse.interfaces.ContactListResultListener
-import com.classic001.androidcorse.interfaces.ContactServiceBoundListener
-import com.classic001.androidcorse.interfaces.ServiceInterface
+import com.classic001.androidcorse.viewmodels.ContactListViewModel
 
-class ContactListFragment : Fragment(), ContactServiceBoundListener {
+class ContactListFragment : Fragment() {
     private var listener: ContactCardClickListener? = null
     private var binding: FragmentContactListBinding? = null
-    private var serviceInterface: ServiceInterface? = null
     private var contactID = ""
+    private val viewModel: ContactListViewModel by viewModels()
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
         if (context is ContactCardClickListener) {
             listener = context
-        }
-        if (context is ServiceInterface) {
-            serviceInterface = context
         }
     }
 
@@ -37,6 +34,7 @@ class ContactListFragment : Fragment(), ContactServiceBoundListener {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? = inflater.inflate(R.layout.fragment_contact_list, container, false)
+
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -47,7 +45,7 @@ class ContactListFragment : Fragment(), ContactServiceBoundListener {
             (activity as AppCompatActivity?)?.supportActionBar?.apply {
                 setTitle(R.string.contact_list_bar)
             }
-            loadContactList()
+            updateUI()
         }
     }
 
@@ -61,25 +59,15 @@ class ContactListFragment : Fragment(), ContactServiceBoundListener {
         super.onDetach()
     }
 
-    private fun loadContactList() =
-        serviceInterface?.getService()?.getContacts(callback)
-
-
-    private val callback = object : ContactListResultListener {
-        override fun onComplete(result: List<Contact>) {
-            contactID = result[0].id
-            requireActivity().runOnUiThread {
-                binding?.contactCard?.apply {
-                    contactName.text = result[0].name
-                    contactNum.text = result[0].phone1
-                    contactImage.setImageURI(result[0].photo?.toUri())
-                }
+    private fun updateUI() {
+        viewModel.getContactList().observe(viewLifecycleOwner, {
+            binding?.contactCard?.apply {
+                contactID = it[0].id
+                contactName.text = it[0].name
+                contactNum.text = it[0].phone1
+                contactImage.setImageURI(it[0].photo?.toUri())
             }
-        }
-    }
-
-    override fun onServiceBound() {
-        loadContactList()
+        })
     }
 
     companion object {

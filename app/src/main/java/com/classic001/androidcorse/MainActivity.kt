@@ -2,15 +2,11 @@ package com.classic001.androidcorse
 
 import android.Manifest
 import android.app.AlertDialog
-import android.content.ComponentName
-import android.content.Context
 import android.content.Intent
-import android.content.ServiceConnection
 import android.content.pm.PackageManager
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.os.IBinder
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
@@ -19,34 +15,9 @@ import com.classic001.androidcorse.fragments.ContactDetailsFragment
 import com.classic001.androidcorse.fragments.ContactListFragment
 import com.classic001.androidcorse.fragments.EXTRA_CONTACT_ID
 import com.classic001.androidcorse.interfaces.ContactCardClickListener
-import com.classic001.androidcorse.interfaces.ContactServiceBoundListener
-import com.classic001.androidcorse.interfaces.ServiceInterface
-import com.classic001.androidcorse.services.ContactService
-import java.lang.ref.WeakReference
 
-class MainActivity : AppCompatActivity(), ContactCardClickListener, ServiceInterface {
+class MainActivity : AppCompatActivity(), ContactCardClickListener {
     private lateinit var requestPermissionLauncher: ActivityResultLauncher<String>
-    private var contactService: ContactService? = null
-    private var bound = false
-    private val connection = object : ServiceConnection {
-        override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
-            val binder = service as ContactService.ContactBinder
-            contactService = binder.getService()
-            bound = true
-            val weakReferenceFragment = WeakReference(
-                supportFragmentManager.findFragmentById(
-                    R.id.fragment_container
-                )
-            )
-            when (val fragment = weakReferenceFragment.get()) {
-                is ContactServiceBoundListener -> fragment.onServiceBound()
-            }
-        }
-
-        override fun onServiceDisconnected(name: ComponentName?) {
-            bound = false
-        }
-    }
 
     @RequiresApi(Build.VERSION_CODES.M)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -58,14 +29,6 @@ class MainActivity : AppCompatActivity(), ContactCardClickListener, ServiceInter
         if (savedInstanceState == null) {
             openContactList()
         }
-    }
-
-    override fun onDestroy() {
-        if (bound) {
-            unbindService(connection)
-            bound = false
-        }
-        super.onDestroy()
     }
 
     private fun openContactList() {
@@ -107,11 +70,7 @@ class MainActivity : AppCompatActivity(), ContactCardClickListener, ServiceInter
         when {
             ContextCompat.checkSelfPermission(this, Manifest.permission.READ_CONTACTS)
                     == PackageManager.PERMISSION_GRANTED -> {
-                bindService(
-                    Intent(this, ContactService::class.java),
-                    connection,
-                    Context.BIND_AUTO_CREATE
-                )
+                return
             }
             shouldShowRequestPermissionRationale(
                 Manifest.permission.READ_CONTACTS
@@ -135,11 +94,7 @@ class MainActivity : AppCompatActivity(), ContactCardClickListener, ServiceInter
         requestPermissionLauncher =
             registerForActivityResult(ActivityResultContracts.RequestPermission()) {
                 if (it) {
-                    bindService(
-                        Intent(this, ContactService::class.java),
-                        connection,
-                        Context.BIND_AUTO_CREATE
-                    )
+                    return@registerForActivityResult
                 } else {
                     val applyPermissionOrExitDialog = AlertDialog.Builder(this)
                     applyPermissionOrExitDialog.setTitle(getString(R.string.permission_choice_dialog_title))
@@ -158,6 +113,4 @@ class MainActivity : AppCompatActivity(), ContactCardClickListener, ServiceInter
     override fun onClick(id: String) {
         openContactDetailsFragment(id)
     }
-
-    override fun getService(): ContactService? = contactService
 }
