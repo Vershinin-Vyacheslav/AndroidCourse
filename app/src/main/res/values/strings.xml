@@ -10,6 +10,7 @@
     <string name="contact_details_bar">Детали контакта</string>
     <string name="birthday_button">нажми</string>
     <string name="birthday_date">Дата рождения %1$d %2$s</string>
+    <string name="birthday_date_is_empty">Дата рождения</string>
     <string name="birthday_button_on">Включить напоминание</string>
     <string name="birthday_button_off">Выключить напоминание</string>
     <string name="channel_name">Channel for birthday notification</string>

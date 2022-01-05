@@ -1,6 +1,5 @@
 package com.classic001.androidcorse.fragments
 
-import android.content.Context
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -10,29 +9,23 @@ import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.net.toUri
 import androidx.core.os.bundleOf
+import androidx.core.view.isVisible
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.ViewModelProvider
 import com.classic001.androidcorse.R
 import com.classic001.androidcorse.data.*
 import com.classic001.androidcorse.databinding.FragmentContactDetailsBinding
-import com.classic001.androidcorse.interfaces.ContactResultListener
-import com.classic001.androidcorse.interfaces.ContactServiceBoundListener
-import com.classic001.androidcorse.interfaces.ServiceInterface
+import com.classic001.androidcorse.viewmodels.ContactDetailsViewModel
 import java.util.*
 
 const val EXTRA_CONTACT_ID = "CONTACT_ID"
 const val CONTACT_NAME = "CONTACT_NAME"
 
-class ContactDetailsFragment : Fragment(), ContactServiceBoundListener {
+class ContactDetailsFragment : Fragment() {
     private var binding: FragmentContactDetailsBinding? = null
-    private var serviceInterface: ServiceInterface? = null
     private var contactId: String = ""
     private var alarmOn = false
-
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        if (context is ServiceInterface) {
-            serviceInterface = context
-        }
-    }
+    private val viewModel: ContactDetailsViewModel by viewModels()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -48,50 +41,42 @@ class ContactDetailsFragment : Fragment(), ContactServiceBoundListener {
         savedInstanceState: Bundle?
     ): View? = inflater.inflate(R.layout.fragment_contact_details, container, false)
 
-    override fun onDetach() {
-        serviceInterface = null
-        super.onDetach()
-    }
 
     override fun onDestroyView() {
         binding = null
         super.onDestroyView()
     }
 
-    private fun loadContactById() =
-        serviceInterface?.getService()?.getContactById(contactId, callback)
-
-    private val callback = object : ContactResultListener {
-        override fun onComplete(result: Contact?) {
-            result ?: return
-            val birthdayString = getString(
-                R.string.birthday_date,
-                result.birthday?.get(Calendar.DAY_OF_MONTH),
-                result.birthday?.getDisplayName(
-                    Calendar.MONTH,
-                    Calendar.SHORT,
-                    Locale.getDefault()
-                )
-            )
-            requireActivity().runOnUiThread {
+    private fun loadContactById() {
+        viewModel.getContactById(contactId)
+            .observe(viewLifecycleOwner, { contact ->
                 binding?.apply {
-                    contactName.text = result.name
-                    contactNumber1.text = result.phone1
-                    contactNumber2.text = result.phone2
-                    contactMail1.text = result.email1
-                    contactMail2.text = result.email2
-                    contactDescription.text = result.description
-                    contactImage.setImageURI(result.photo?.toUri())
-                    if (result.birthday != null) {
-                        birthday.text = birthdayString
+                    contactName.text = contact.name
+                    contactNumber1.text = contact.phone1
+                    contactNumber2.text = contact.phone2
+                    contactMail1.text = contact.email1
+                    contactMail2.text = contact.email2
+                    contactDescription.text = contact.description
+                    contactImage.setImageURI(contact.photo?.toUri())
+                    if (contact.birthday != null) {
+                        birthday.text = getString(
+                            R.string.birthday_date,
+                            contact.birthday.get(Calendar.DAY_OF_MONTH),
+                            contact.birthday.getDisplayName(
+                                Calendar.MONTH,
+                                Calendar.SHORT,
+                                Locale.getDefault()
+                            )
+                        )
                         setButtonState(birthdayButton)
                         birthdayButton.setOnClickListener {
-                            onBirthdayButtonClick(result)
+                            onBirthdayButtonClick(contact)
                         }
+                    } else {
+                        birthdayButton.text = getString(R.string.birthday_date_is_empty)
                     }
                 }
-            }
-        }
+            })
     }
 
     private fun setButtonState(button: Button) {
@@ -113,10 +98,6 @@ class ContactDetailsFragment : Fragment(), ContactServiceBoundListener {
             binding?.birthdayButton?.text = getString(R.string.birthday_button_on)
             cancelBirthdayAlarm(requireContext(), currentContact)
         }
-    }
-
-    override fun onServiceBound() {
-        loadContactById()
     }
 
     companion object {
